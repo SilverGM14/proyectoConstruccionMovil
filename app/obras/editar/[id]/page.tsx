@@ -37,7 +37,6 @@ export default function EditarObra({ params }: { params: Promise<{ id: string }>
     fechafin: ''
   })
 
-  // OFFLINE: Hooks de red y mutación offline
   const isOnline = useNetworkStatus()
   const { mutate } = useOfflineMutation('obras')
 
@@ -89,11 +88,11 @@ export default function EditarObra({ params }: { params: Promise<{ id: string }>
       fechafin: form.fechafin || null
     }
 
-    // OFFLINE: Usar mutate en lugar de supabase directamente
-    const { error } = await mutate('update', payload, parseInt(id))
+    // OFFLINE: id is lowercase, parseInt converts string param to number
+    const result = await mutate('update', payload, parseInt(id))
 
-    if (error) {
-      alert('Error al actualizar: ' + error.message)
+    if (result.error) {
+      alert('Error al actualizar: ' + result.error.message)
     } else {
       if (!isOnline) {
         alert('Obra guardada localmente. Se sincronizará al recuperar la conexión.')
@@ -110,7 +109,6 @@ export default function EditarObra({ params }: { params: Promise<{ id: string }>
         animate={{ opacity: 1, y: 0 }}
         className="max-w-3xl mx-auto"
       >
-        {/* OFFLINE: Badge de estado sin conexión */}
         {!isOnline && (
           <div className="mb-3 p-2 card-alert flex items-center gap-2 text-sm">
             <WifiOff size={16} /> Modo sin conexión — los cambios se guardarán localmente

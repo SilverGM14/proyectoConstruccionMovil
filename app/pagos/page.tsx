@@ -70,10 +70,10 @@ export default function PagosPage() {
     if (!confirm('¿Eliminar este pago?')) return
 
     // OFFLINE: Usar mutate para eliminar
-    const { error } = await mutate('delete', null, id)
+    const result = await mutate('update', payload, parseInt(Id));
 
-    if (error) {
-      alert('Error: ' + error.message)
+    if (result.error) {
+      alert('Error: ' + result.error.message)
     } else {
       if (!isOnline) {
         alert('Pago marcado para eliminar. Se sincronizará al recuperar la conexión.')

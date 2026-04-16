@@ -65,10 +65,10 @@ export default function NuevoPresupuesto() {
     }
 
     // OFFLINE: Usar mutate para inserción
-    const { error } = await mutate('insert', payload)
+    const result = await mutate('update', payload, parseInt(Id));
 
-    if (error) {
-      alert('Error: ' + error.message)
+    if (result.error) {
+      alert('Error: ' + result.error.message)
     } else {
       if (!isOnline) {
         alert('Presupuesto guardado localmente. Se sincronizará al recuperar la conexión.')

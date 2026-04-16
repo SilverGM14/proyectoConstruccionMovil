@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import './globals.css'
 import { AuthProvider, useAuth } from '@/lib/AuthContext'
-import { OnlineSyncProvider } from '@/components/OnlineSyncProvider'
+
 import { useNetworkStatus } from '@/hooks/useNetworkStatus'
 
 // ── Tipos ────────────────────────────────────────────────────────────
@@ -120,7 +120,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
               <div>
                 <p className="glitch font-display font-bold text-lg leading-none" data-text="GoMe" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
-                  GoMe
+                  CONSTRUCTORA GoMe
                 </p>
                 <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>
                   GESTIÓN v2.0
@@ -192,7 +192,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             </button>
 
             <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '0.75rem', letterSpacing: '0.08em' }}>
-              GoMe v1.1.2 · {isOnline ? 'Conectado' : 'Sin conexión'}
+              GoMe v2.1.2 · {isOnline ? 'Conectado' : 'Sin conexión'}
             </p>
           </div>
         </motion.aside>
@@ -238,9 +238,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <AuthProvider>
-          <OnlineSyncProvider>
-            <AppLayout>{children}</AppLayout>
-          </OnlineSyncProvider>
+          <AppLayout>{children}</AppLayout>
         </AuthProvider>
       </body>
     </html>

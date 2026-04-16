@@ -69,10 +69,10 @@ export default function ObrasPage() {
     if (!confirm('¿Eliminar esta obra y todas sus subobras? Esta acción no se puede deshacer.')) return
     
     // OFFLINE: Usar mutate para eliminar
-    const { error } = await mutate('delete', null, id)
+    const result = await mutate('delete', {}, parseInt(id));
     
-    if (error) {
-      alert('Error al eliminar: ' + error.message)
+    if (result.error) {
+      alert('Error al eliminar: ' + result.error.message)
     } else {
       if (!isOnline) {
         alert('Obra marcada para eliminar. Se sincronizará al recuperar la conexión.')

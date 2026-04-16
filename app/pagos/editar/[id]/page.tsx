@@ -81,10 +81,10 @@ export default function EditarPago({ params }: { params: Promise<{ id: string }>
     }
 
     // OFFLINE: Usar mutate en lugar de supabase directamente
-    const { error } = await mutate('update', payload, parseInt(id))
+    const result = await mutate('update', payload, parseInt(Id));
 
-    if (error) {
-      alert('Error: ' + error.message)
+    if (result.error) {
+      alert('Error: ' + result.error.message)
     } else {
       if (!isOnline) {
         alert('Pago actualizado localmente. Se sincronizará al recuperar la conexión.')

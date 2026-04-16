@@ -2,8 +2,14 @@
 import { useNetworkStatus } from './useNetworkStatus';
 import { offlineDB } from '@/lib/offlineDB';
 import { supabase } from '@/lib/supabaseClient';
+import { PostgrestError } from '@supabase/supabase-js';
 
 type MutationAction = 'insert' | 'update' | 'delete';
+
+interface MutationResult {
+  data: any | null;
+  error: PostgrestError | Error | null;
+}
 
 export function useOfflineMutation(table: string) {
   const isOnline = useNetworkStatus();
@@ -12,26 +18,37 @@ export function useOfflineMutation(table: string) {
     action: MutationAction,
     payload?: any,
     recordId?: number
-  ) => {
+  ): Promise<MutationResult> => {
     if (isOnline) {
       // Ejecutar directamente en Supabase
       let result;
-      if (action === 'insert') result = await supabase.from(table).insert(payload);
-      else if (action === 'update') result = await supabase.from(table).update(payload).eq('id', recordId);
-      else if (action === 'delete') result = await supabase.from(table).delete().eq('id', recordId);
-      return result;
+      try {
+        if (action === 'insert') {
+          result = await supabase.from(table).insert(payload);
+        } else if (action === 'update') {
+          result = await supabase.from(table).update(payload).eq('id', recordId);
+        } else if (action === 'delete') {
+          result = await supabase.from(table).delete().eq('id', recordId);
+        }
+        return { data: result?.data ?? null, error: result?.error ?? null };
+      } catch (err) {
+        return { data: null, error: err as Error };
+      }
     } else {
       // Guardar en cola local
-      await offlineDB.pendingOperations.add({
-        table,
-        action,
-        payload,
-        recordId,
-        timestamp: Date.now(),
-        synced: false,
-      });
-      // Retornar un objeto simulado para que el UI no falle
-      return { data: payload, error: null };
+      try {
+        await offlineDB.pendingOperations.add({
+          table,
+          action,
+          payload,
+          recordId,
+          timestamp: Date.now(),
+          synced: false,
+        });
+        return { data: payload, error: null };
+      } catch (err) {
+        return { data: null, error: err as Error };
+      }
     }
   };
 

@@ -68,10 +68,10 @@ export default function EditarPresupuesto({ params }: { params: Promise<{ id: st
     }
 
     // OFFLINE: Usar mutate
-    const { error } = await mutate('update', payload, parseInt(id))
+    const result = await mutate('update', payload, parseInt(Id));
 
-    if (error) {
-      alert('Error: ' + error.message)
+    if (result.error) {
+      alert('Error: ' + result.error.message)
     } else {
       if (!isOnline) {
         alert('Presupuesto guardado localmente. Se sincronizará al recuperar la conexión.')

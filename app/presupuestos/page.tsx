@@ -63,10 +63,10 @@ export default function PresupuestosPage() {
     if (!confirm('¿Eliminar este presupuesto?')) return
     
     // OFFLINE: Usar mutate para eliminar
-    const { error } = await mutate('delete', null, id)
+    const result = await mutate('update', payload, parseInt(Id));
     
-    if (error) {
-      alert('Error al eliminar: ' + error.message)
+    if (result.error) {
+      alert('Error al eliminar: ' + result.error.message)
     } else {
       if (!isOnline) {
         alert('Presupuesto marcado para eliminar. Se sincronizará al recuperar la conexión.')

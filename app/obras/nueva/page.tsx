@@ -11,7 +11,6 @@ import { useNetworkStatus } from '@/hooks/useNetworkStatus'
 
 type Obra = { id: number; nombre: string }
 
-// Componente interno que usa useSearchParams
 function NuevaObraForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -31,7 +30,6 @@ function NuevaObraForm() {
     fechafin: ''
   })
 
-  // OFFLINE: Hooks de red y mutación offline
   const isOnline = useNetworkStatus()
   const { mutate } = useOfflineMutation('obras')
 
@@ -61,11 +59,11 @@ function NuevaObraForm() {
       fechafin: form.fechafin || null
     }
 
-    // OFFLINE: Usar mutate para inserción
-    const { error } = await mutate('insert', payload)
+    // OFFLINE: insert — no ID needed for new records
+    const result = await mutate('insert', payload)
 
-    if (error) {
-      alert('Error: ' + error.message)
+    if (result.error) {
+      alert('Error: ' + result.error.message)
     } else {
       if (!isOnline) {
         alert('Obra guardada localmente. Se sincronizará al recuperar la conexión.')
@@ -77,7 +75,6 @@ function NuevaObraForm() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto">
-      {/* OFFLINE: Badge de estado sin conexión */}
       {!isOnline && (
         <div className="mb-3 p-2 card-alert flex items-center gap-2 text-sm">
           <WifiOff size={16} /> Modo sin conexión — los cambios se guardarán localmente
@@ -138,8 +135,12 @@ function NuevaObraForm() {
             <textarea name="descripcion" value={form.descripcion} onChange={handleChange} rows={3} className="input-cyber" placeholder="Detalles del proyecto..." />
           </div>
           <div className="flex gap-3 pt-4">
-            <button type="submit" disabled={loading} className="btn-primary"><Save size={16} /> {loading ? 'Guardando...' : 'Guardar'}</button>
-            <button type="button" onClick={() => router.push('/obras')} className="btn-ghost"><X size={16} /> Cancelar</button>
+            <button type="submit" disabled={loading} className="btn-primary flex items-center gap-2">
+              <Save size={16} /> {loading ? 'Guardando...' : 'Guardar'}
+            </button>
+            <button type="button" onClick={() => router.push('/obras')} className="btn-ghost flex items-center gap-2">
+              <X size={16} /> Cancelar
+            </button>
           </div>
         </form>
       </div>
@@ -147,7 +148,6 @@ function NuevaObraForm() {
   )
 }
 
-// Componente principal que envuelve el formulario en Suspense y ProtectedRoute
 export default function NuevaObra() {
   return (
     <ProtectedRoute>
